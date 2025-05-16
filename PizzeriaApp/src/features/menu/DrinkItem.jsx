@@ -1,8 +1,12 @@
 import React, { useState } from "react";
+import { useCart } from "../cart/CartContext";
+
+
 
 const DrinkItem = ({ drink }) => {
   const [volume, setVolume] = useState(drink.volume[0]);
   const price = drink.price[volume];
+  const { addToCart } = useCart();
 
   return (
     <div className="border rounded p-4">
@@ -25,7 +29,17 @@ const DrinkItem = ({ drink }) => {
 
       <div className="mt-4 font-semibold">
         Ціна: {price} грн
-        <button className="ml-4 bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+        <button
+          onClick={() =>
+            addToCart({
+              id: `${drink.id}-${volume}-${Date.now()}`,
+              name: drink.name,
+              volume,
+              price: price,
+            })
+          }
+          className="ml-4 bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+           >
           Додати до кошика
         </button>
       </div>

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useCart } from "../cart/CartContext"; 
 
 const PizzaItem = ({ pizza }) => {
   const [size, setSize] = useState("середня");
   const [dough, setDough] = useState("традиційне");
   const [extras, setExtras] = useState([]);
+  const { addToCart } = useCart();
 
   const handleExtraChange = (e) => {
     const { value, checked } = e.target;
@@ -68,7 +70,19 @@ const PizzaItem = ({ pizza }) => {
 
       <div className="mt-4 font-semibold">
         Ціна: {totalPrice} грн
-        <button className="ml-4 bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+        <button
+          onClick={() =>
+            addToCart({
+              id: `${pizza.id}-${size}-${dough}-${extras.join(",")}-${Date.now()}`,
+              name: pizza.name,
+              size,
+              dough,
+              ingredients: extras,
+              price: totalPrice,
+            })
+          }
+          className="ml-4 bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+        >
           Додати до кошика
         </button>
       </div>
