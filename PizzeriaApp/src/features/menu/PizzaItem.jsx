@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useCart } from "../cart/CartContext"; 
+import { useCart } from "../cart/CartContext";
 
 const PizzaItem = ({ pizza }) => {
   const [size, setSize] = useState("середня");
@@ -19,7 +19,13 @@ const PizzaItem = ({ pizza }) => {
   const totalPrice = basePrice + extraPrice;
 
   return (
-    <div className="border rounded p-4">
+    <div className="border rounded p-4 shadow-md max-w-sm mx-auto">
+      <img
+        src={pizza.image}
+        alt={pizza.name}
+        className="w-full h-48 object-cover rounded mb-3"
+      />
+
       <h3 className="text-lg font-semibold">{pizza.name}</h3>
       <p className="text-sm text-gray-600">{pizza.description}</p>
 

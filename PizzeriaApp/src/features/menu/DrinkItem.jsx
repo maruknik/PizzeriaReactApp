@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import { useCart } from "../cart/CartContext";
 
-
-
 const DrinkItem = ({ drink }) => {
   const [volume, setVolume] = useState(drink.volume[0]);
   const price = drink.price[volume];
   const { addToCart } = useCart();
 
   return (
-    <div className="border rounded p-4">
+    <div className="border rounded p-4 shadow-md max-w-sm mx-auto">
+  <img
+    src={drink.image}
+    alt={drink.name}
+    className="w-32 h-32 object-cover rounded mx-auto mb-2"
+  />
+
       <h3 className="text-lg font-semibold">{drink.name}</h3>
 
       <div className="mt-2">
@@ -39,7 +43,7 @@ const DrinkItem = ({ drink }) => {
             })
           }
           className="ml-4 bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-           >
+        >
           Додати до кошика
         </button>
       </div>
