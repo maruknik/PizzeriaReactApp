@@ -39,7 +39,7 @@ const DrinkItem = ({ drink }) => {
               id: `${drink.id}-${volume}-${Date.now()}`,
               name: drink.name,
               volume,
-              price: price,
+              price: price[selectedVolume],
             })
           }
           className="ml-4 bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"

@@ -1,26 +1,60 @@
- import { useCart } from './CartContext';
+// src/features/cart/Cart.jsx
+import React from "react";
+import { useCart } from "./CartContext";
 
 const Cart = () => {
-  const { cartItems, removeFromCart, clearCart } = useCart();
+  const { cartItems, updateQuantity, removeFromCart } = useCart();
+
+  const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
-    <div>
-      <h2 className="text-xl font-bold">Кошик</h2>
-      {cartItems.length === 0 && <p>Кошик порожній</p>}
-      <ul>
-        {cartItems.map((item) => (
-          <li key={item.id} className="border p-2 my-2">
-            <p>{item.name}</p>
-            {item.size && <p>Розмір: {item.size}</p>}
-            {item.dough && <p>Тісто: {item.dough}</p>}
-            {item.ingredients?.length > 0 && <p>Інгредієнти: {item.ingredients.join(', ')}</p>}
-            <p>Ціна: {item.price} грн</p>
-            <button onClick={() => removeFromCart(item.id)}>Видалити</button>
-          </li>
-        ))}
-      </ul>
-      {cartItems.length > 0 && (
-        <button onClick={clearCart} className="mt-4 bg-red-500 text-white px-4 py-2">Очистити кошик</button>
+    <div className="p-4">
+      <h2 className="text-2xl font-bold mb-4">🛒 Кошик</h2>
+
+      {cartItems.length === 0 ? (
+        <p>Кошик порожній.</p>
+      ) : (
+        <div className="space-y-4">
+          {cartItems.map((item) => (
+            <div
+              key={item.id}
+              className="border p-4 rounded shadow flex flex-col sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div>
+                <h3 className="text-lg font-semibold">{item.name}</h3>
+                {item.size && <p>Розмір: {item.size}</p>}
+                {item.dough && <p>Тісто: {item.dough}</p>}
+                {item.volume && <p>Обʼєм: {item.volume} л</p>}
+                {item.ingredients?.length > 0 && (
+                  <p>
+                    Інгредієнти: <span className="text-sm">{item.ingredients.join(", ")}</span>
+                  </p>
+                )}
+                <p>Ціна за одиницю: {item.price} грн</p>
+              </div>
+
+              <div className="mt-2 sm:mt-0 flex items-center gap-2">
+                <input
+                  type="number"
+                  value={item.quantity}
+                  min="1"
+                  onChange={(e) => updateQuantity(item.id, parseInt(e.target.value))}
+                  className="border w-16 p-1 rounded text-center"
+                />
+                <button
+                  onClick={() => removeFromCart(item.id)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  ❌
+                </button>
+              </div>
+            </div>
+          ))}
+
+          <div className="text-xl font-bold mt-6">
+            Загальна сума: {total} грн
+          </div>
+        </div>
       )}
     </div>
   );
