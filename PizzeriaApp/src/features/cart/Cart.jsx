@@ -1,6 +1,7 @@
-// src/features/cart/Cart.jsx
 import React from "react";
 import { useCart } from "./CartContext";
+import { Link } from "react-router-dom";
+
 
 const Cart = () => {
   const { cartItems, updateQuantity, removeFromCart } = useCart();
@@ -53,7 +54,13 @@ const Cart = () => {
 
           <div className="text-xl font-bold mt-6">
             Загальна сума: {total} грн
-          </div>
+          </div>    
+            <Link
+              to="/order"
+              className="inline-block mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+              Оформити замовлення
+            </Link>     
         </div>
       )}
     </div>

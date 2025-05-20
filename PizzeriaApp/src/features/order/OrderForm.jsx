@@ -1,97 +1,138 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useFormik } from "formik";
+import { useCart } from "../cart/CartContext";
 import { initialValues, validationSchema } from "./orderFormSchema";
+import { Link } from "react-router-dom";
 
 const OrderForm = () => {
+  const { cartItems, clearCart } = useCart();
   const [confirmed, setConfirmed] = useState(false);
+  const [confirmedData, setConfirmedData] = useState(null);
 
-  
-const formik = useFormik({
-  initialValues,
-  validationSchema,
-  onSubmit: (values) => {
-    console.log("Дані замовлення:", values);
-    setConfirmed(true);
-  },
-});
+  const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  if (confirmed) {
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: (values) => {
+      const orderData = { ...values, cartItems, total };
+      console.log("🛒 Нове замовлення оформлено:", orderData);
+      setConfirmedData(orderData);
+      setConfirmed(true);
+      clearCart();
+    },
+  });
+
+  if (confirmed && confirmedData) {
     return (
-      <div className="p-4">
-        <h2 className="text-2xl font-bold text-green-600">Замовлення підтверджено!</h2>
-        <p>Дякуємо за ваше замовлення, {formik.values.name}.</p>
+      <div className="max-w-xl mx-auto p-4 bg-white rounded shadow">
+        <h2 className="text-2xl font-bold mb-4">✅ Замовлення підтверджено!</h2>
+        <p><strong>Імʼя:</strong> {confirmedData.name}</p>
+        <p><strong>Телефон:</strong> {confirmedData.phone}</p>
+        <p><strong>Адреса:</strong> {confirmedData.address}</p>
+        {confirmedData.comment && <p><strong>Коментар:</strong> {confirmedData.comment}</p>}
+
+        <div className="mt-4">
+          <h3 className="font-semibold">Ваше замовлення:</h3>
+          <ul className="list-disc ml-5">
+            {confirmedData.cartItems.map((item) => (
+              <li key={item.id}>
+                {item.name} × {item.quantity} — {item.price * item.quantity} грн
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 font-bold">Загальна сума: {confirmedData.total} грн</p>
+        </div>
+
+        <Link to="/">
+          <button className="mt-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Повернутись на головну
+          </button>
+        </Link>
       </div>
     );
   }
 
   return (
-    <form onSubmit={formik.handleSubmit} className="space-y-4 p-4 max-w-md mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Оформити замовлення</h2>
+    <div className="max-w-xl mx-auto p-4 bg-white rounded shadow space-y-6">
+      <h2 className="text-2xl font-bold">📦 Оформлення замовлення</h2>
 
-      <div>
-        <label className="block">Ім’я *</label>
-        <input
-          name="name"
-          type="text"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.name}
-          className="border rounded w-full p-2"
-        />
-        {formik.touched.name && formik.errors.name && (
-          <div className="text-red-500 text-sm">{formik.errors.name}</div>
-        )}
-      </div>
+      {cartItems.length > 0 && (
+        <div>
+          <h3 className="font-semibold mb-2">Ваше замовлення:</h3>
+          <ul className="list-disc ml-5 text-sm">
+            {cartItems.map((item) => (
+              <li key={item.id}>
+                {item.name} × {item.quantity} — {item.price * item.quantity} грн
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 font-bold">Сума: {total} грн</p>
+        </div>
+      )}
 
-      <div>
-        <label className="block">Телефон *</label>
-        <input
-          name="phone"
-          type="tel"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.phone}
-          className="border rounded w-full p-2"
-          placeholder="+380..."
-        />
-        {formik.touched.phone && formik.errors.phone && (
-          <div className="text-red-500 text-sm">{formik.errors.phone}</div>
-        )}
-      </div>
+      <form onSubmit={formik.handleSubmit} className="space-y-4">
+        <div>
+          <label>Імʼя:</label>
+          <input
+            name="name"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.name}
+            className="w-full border p-2 rounded"
+          />
+          {formik.touched.name && formik.errors.name && (
+            <div className="text-red-500 text-sm">{formik.errors.name}</div>
+          )}
+        </div>
 
-      <div>
-        <label className="block">Адреса доставки *</label>
-        <input
-          name="address"
-          type="text"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.address}
-          className="border rounded w-full p-2"
-        />
-        {formik.touched.address && formik.errors.address && (
-          <div className="text-red-500 text-sm">{formik.errors.address}</div>
-        )}
-      </div>
+        <div>
+          <label>Телефон:</label>
+          <input
+            name="phone"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.phone}
+            className="w-full border p-2 rounded"
+            placeholder="+380..."
+          />
+          {formik.touched.phone && formik.errors.phone && (
+            <div className="text-red-500 text-sm">{formik.errors.phone}</div>
+          )}
+        </div>
 
-      <div>
-        <label className="block">Коментар</label>
-        <textarea
-          name="comment"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.comment}
-          className="border rounded w-full p-2"
-        />
-      </div>
+        <div>
+          <label>Адреса:</label>
+          <input
+            name="address"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.address}
+            className="w-full border p-2 rounded"
+          />
+          {formik.touched.address && formik.errors.address && (
+            <div className="text-red-500 text-sm">{formik.errors.address}</div>
+          )}
+        </div>
 
-      <button
-        type="submit"
-        className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
-      >
-        Підтвердити замовлення
-      </button>
-    </form>
+        <div>
+          <label>Коментар:</label>
+          <textarea
+            name="comment"
+            onChange={formik.handleChange}
+            value={formik.values.comment}
+            className="w-full border p-2 rounded"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+        >
+          Підтвердити замовлення
+        </button>
+      </form>
+    </div>
   );
 };
 

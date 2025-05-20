@@ -8,11 +8,11 @@ const DrinkItem = ({ drink }) => {
 
   return (
     <div className="border rounded p-4 shadow-md max-w-sm mx-auto">
-  <img
-    src={drink.image}
-    alt={drink.name}
-    className="w-32 h-32 object-cover rounded mx-auto mb-2"
-  />
+      <img
+        src={drink.image}
+        alt={drink.name}
+        className="w-32 h-32 object-cover rounded mx-auto mb-2"
+      />
 
       <h3 className="text-lg font-semibold">{drink.name}</h3>
 
@@ -36,10 +36,11 @@ const DrinkItem = ({ drink }) => {
         <button
           onClick={() =>
             addToCart({
-              id: `${drink.id}-${volume}-${Date.now()}`,
+              id: `${drink.id}-${volume}-${Date.now()}`, 
               name: drink.name,
               volume,
-              price: price[selectedVolume],
+              price,
+              quantity: 1,
             })
           }
           className="ml-4 bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
